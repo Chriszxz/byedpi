@@ -11,176 +11,142 @@ ciadpi --fake -1 --ttl 8
 ### Описание аргументов
 ```
 -i, --ip <ip>
-    Прослушиваемый IP, по умолчанию 0.0.0.0
+Listening IP, default 0.0.0.0
 
 -p, --port <num>
-    Прослушиваемый порт, по умолчанию 1080
+Listening port, default 1080
 
 -D, --daemon
-    Запуск в режиме демона
-    Поддерживается только в Linux и BSD системах
+Run in daemon mode
+Only supported on Linux and BSD systems
 
 -w, --pidfile <filename>
-    Расположение PID-файла
+Location of the PID file
 
 -E, --transparent
-    Запуск в режиме прозрачного прокси, SOCKS работать не будет
-    
--c, --max-conn <count>
-    Максимальное количество клиентских подключений, по умолчанию 512
+Run in transparent proxy mode; SOCKS will not work
 
--I,  --conn-ip <ip>
-    Адрес, к которому будут привязаны исходящие соединения, по умолчанию ::
-    При указании IPv4 адреса запросы на IPv6 будут отклоняться
+-c, --max-conn <count>
+Maximum number of client connections, default 512
+
+-I, --conn-ip <ip>
+Address to which outgoing connections will be bound, default ::
+If an IPv4 address is specified, IPv6 requests will be rejected
 
 -b, --buf-size <size>
-    Максимальный размер данных, получаемых и отправляемых за один вызов recv/send
-    Размер указывается в байтах, по умолчанию равен 16384
+Maximum size of data received and sent in a single recv/send call
+The size is specified in bytes; default is 16384
 
 -g, --def-ttl <num>
-    Значение TTL для всех исходящий соединений
-    Может быть полезен для обхода обнаружения нестандартного/уменьшенного TTL
+TTL value for all outgoing connections
+Can be useful for bypassing non-standard/reduced TTL detection.
 
 -N, --no-domain
-    Отбрасывать запросы, если в качестве адреса указан домен
-    Т.к. резолвинг выполняется синхронно, то он может замедлить или даже заморозить работу
+Discard requests if a domain is specified as the address.
+Because Since resolving is performed synchronously, it can slow down or even freeze the operation.
 
 -U, --no-udp
-    Не проксировать UDP
-    
+Do not proxy UDP
+
 -F, --tfo
-    Включает TCP Fast Open
-    Если сервер его поддерживает, то первый пакет будет отправлен сразу вместе с SYN
-    Поддерживается только в Linux (4.11+)
-    
+Enables TCP Fast Open
+If the server supports it, the first packet will be sent immediately along with the SYN
+Supported only on Linux (4.11+)
+
 -A, --auto <t,r,s,n>
-    Автоматический режим
-    Если произошло событие, похожее на блокировку или поломку,
-    то будут применены параметры обхода, следующие за данной опцией
-    Возможные события:
-        torst   : Вышло время ожидания или сервер сбросил подключение после первого запроса
-        redirect: HTTP Redirect с Location, домен которого не совпадает с исходящим
-        ssl_err : В ответ на ClientHello не пришел ServerHello или SH содержит некорректный session_id
-        none    : Предыдущая группа пропущена, например из-за ограничения по доменам или протоколам
-    
+Automatic mode
+If an event similar to a blocking or crash occurs,
+the bypass parameters following this option will be applied.
+Possible events:
+torst: Timeout expired or the server dropped the connection after the first request
+redirect: HTTP Redirect with a Location whose domain does not match the outgoing one
+ssl_err: No ServerHello was received in response to ClientHello, or the SH contains an invalid session_id
+none: The previous group was skipped, for example due to domain or protocol restrictions
+
 -L, --auto-mode <0-3>
-    0: кешировать IP только если имеется возможность переподключиться
-    1: кешировать IP также в том случае, если:
-        torst - таймаут/соединение сброшено во время обмена пакетами (т.е. уже после первых данных от сервера)
-        ssl_err - совершился лишь один круг обмена данными (запрос-ответ/запрос-ответ-запрос)
-    2: сортировать группы по количеству срабатываний триггера, от меньшего к большему
-    3: 1 и 2 одновременно
-    
+0: Cache IP only if a reconnection is possible
+1: Cache IP also if:
+torst - timeout/connection dropped during packet exchange (i.e., after the first data from the server)
+ssl_err - only one round trip (request-response/request-response-request) has occurred
+2: Sort groups by the number of trigger occurrences, from lowest to highest
+3: 1 and 2 simultaneously
+
 -u, --cache-ttl <sec>
-    Время жизни значения в кеше, по умолчанию 100800 (28 часов)
-    
+Cache lifetime, default 100800 (28 hours)
+
 -y, --cache-dump <file|->
-    Выгрузить кеш в файл или stdout. Формат: <ip> <port> <group index> <time> <host>
-    
+Dump cache to file or stdout. Format: <ip> <port> <group index> <time> <host>
+
 -T, --timeout <sec>
-    Таймаут ожидания первого ответа от сервера в секундах
-    В Linux переводится в миллисекунды, поэтому можно указать дробное число
-    
+Timeout for the first response from the server in seconds
+In Linux, this is converted to milliseconds, so you can specify a fractional number.
+
 -K, --proto <t,h,u,i>
-    Белый список протоколов: tls,http,udp,ipv4
-    
+Protocol whitelist: tls,http,udp,ipv4
+
 -H, --hosts <file|:string>
-    Ограничить область действия параметров списком доменов
-    Домены должны быть разделены новой строкой или пробелом
-    
+Limit the scope of parameters to a list of domains
+Domains must be separated by a newline or a space.
+
 -j, --ipset <file|:str>
-    Ограничитель по определенным IP/подсетям
-    
+Limit by specific IPs/subnets
+
 -V, --pf <port[-portr]>
-    Ограничитель по портам
-    
+Limit by ports
+
 -R, --round <num[-numr]>
-    К каким/какому запросу применять запутывание
-    По умолчанию 1, т.е. к первому запросу
-    
+Which requests to apply obfuscation to
+Defaults to 1, i.e. to the first request
+
 -s, --split <pos_t>
-    Разбить запрос по указанной позиции
-    Позиция имеет вид offset[:repeats:skip][+flag1[flag2]]
-    Флаги:
-        +s: добавить смещение SNI
-        +h: добавить смещение Host
-        +n: нулевое смещение
-    Дополнительные флаги:
-        +e: конец; +m: середина
-    Примеры: 
-        0+sm - разбить запрос в середине SNI
-        1:3:5 - разбить по позициям 1, 6 и 11
-    Ключ можно указывать несколько раз, чтобы разбить запрос по нескольким позициям
-    Если offset отрицательный и не имеет флагов, то к нему прибавляется размер пакета
-    
+Split the request by the specified position
+The position is of the form offset[:repeats:skip][+flag1[flag2]]
+Flags:
++s: add SNI offset
++h: add Host offset
++n: zero offset
+Additional flags:
++e: end; +m: middle
+Examples:
+0+sm - split the request in the middle of the SNI
+1:3:5 - split by positions 1, 6, and 11
+The key can be specified multiple times to split the request into multiple positions
+If offset is negative and has no flags, the packet size is added to it.
+
 -d, --disorder <pos_t>
-    Подобен --split, но части отправляются в обратном порядке
-    
+Similar to --split, but the parts are sent in reverse order.
+
 -o, --oob <pos_t>
-    Подобен --split, но часть отсылается как OOB данные
-    
+Similar to --split, but the part is sent as out-of-bounds data.
+
 -q, --disoob <pos_t>
-    Подобен --disorder, но часть отсылается как OOB данные
-    
+Similar to --disorder, but the part is sent as out-of-bounds data.
+
 -f, --fake <pos_t>
-    Подобен --disorder, только перед отправкой первого куска отправляется часть поддельного
-    Количество байт отправляемого из фейка равно рамеру разбиваемой части
-    ! На Windows может работать нестабильно
- 
+Similar to --disorder, except that a part of the fake part is sent before the first part.
+The number of bytes sent from the fake part is equal to the size of the part being split.
+! May be unstable on Windows.
+
 -t, --ttl <num>
-    TTL для поддельного пакета, по умолчанию 8
-    Необходимо подобрать такое значение, чтобы пакет не дошел до сервера, но был обработан DPI
+TTL for the fake packet, defaults to 8
+You need to choose a value so that the packet doesn't reach the server, but is processed by DPI.
 
 -S, --md5sig
-    Установить опцию TCP MD5 Signature для фейкового пакета
-    Большинство серверов (в основном на Linux) отбрасывают пакеты с данной опцией
-    Поддерживается только в Linux, может быть выключен в некоторых сборках ядра (< 3.9, Android)
+Set the TCP MD5 Signature option for the fake packet.
+Most servers (mainly Linux-based) discard packets with this option.
+Only supported on Linux; may be disabled in some kernel builds (< 3.9, Android).
 
 -O, --fake-offset <pos_t>
-    Сместить начало фейковых данных
-    Смещения с флагами вычисляются относительно оригинального запроса
-       
+Offset the start of the fake data.
+Offsets with flags are calculated relative to the original request.
+
 -l, --fake-data <file|:str>
-    Указать свои поддельные пакеты
-    Строка может содержать escape символы (\n,\0,\0x10)
+Specify your own fake packets.
+The string may contain escape characters (\n,\0,\0x10).
 
 -e, --oob-data <char>
-    Байт, отсылаемый вне основного потока, по умолчанию 'a'
-    Можно указать ASCII или escape символ
-    
--n, --fake-sni <str>
-    Динамично меняет SNI в фейковом пакете
-    Если размер фейка больше размера запроса, то фейк уменьшается (изменяются размеры Padding, ECH или удаляются некоторые расширения)
-    Символ "?" заменяется на случайную латинскую букву, "#" на цифру, "*" на букву или цифру
-    Можно указывать несколько раз, для каждого запроса будет выбираться случайный SNI из указанных
-    
--Q, --fake-tls-mod <flag>
-    rand - заполнить случайными данными поля SessionID, Random и KeyExchange
-    orig - использовать в качестве фейка оригинальный ClientHello
-    msize=n - максимальный размер фейка; отрицательное число уменьшает оригинальный размер на -n байт
-    
--M, --mod-http <h[,d,r]>
-    Всякие манипуляции с HTTP пакетом, можно комбинировать
-    hcsmix:
-        "Host: name" -> "hOsT: name"
-    dcsmix:
-        "Host: name" -> "Host: NaMe"
-    rmspace:
-        "Host: name" -> "Host:name\t"
-
--r, --tlsrec <pos_t>
-    Разделить ClientHello на отдельные записи по указанному смещению
-    Можно указывать несколько раз  
-
--m, --tlsminor <ver>
-    Меняет третий байт в TLS записи на указанный
-    
--a, --udp-fake <count>
-    Количество фейковых UDP пакетов
-
--Y, --drop-sack
-    Игнорировать SACK, вынуждая ядро переотправить уже доставленные пакеты
-    Поддерживается только в Linux
+Byte sent outside the main stream, defaults to 'a'.
+Can be specified.
 ```
 
 ------

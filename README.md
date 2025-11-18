@@ -11,176 +11,176 @@ ciadpi --fake -1 --ttl 8
 ### Описание аргументов
 ```
 -i, --ip <ip>
-Listening IP, default 0.0.0.0
+    Listening IP, default 0.0.0.0
 
 -p, --port <num>
-Listening port, default 1080
+    Listening port, default 1080
 
 -D, --daemon
-Run in daemon mode
-Only supported on Linux and BSD systems
+    Run in daemon mode
+    Only supported on Linux and BSD systems
 
 -w, --pidfile <filename>
-Location of the PID file
+    Location of the PID file
 
 -E, --transparent
-Run in transparent proxy mode; SOCKS will not work
+    Run in transparent proxy mode; SOCKS will not work
 
 -c, --max-conn <count>
-Maximum number of client connections, default 512
+    Maximum number of client connections, default 512
 
 -I, --conn-ip <ip>
-Address to which outgoing connections will be bound, default ::
-If an IPv4 address is specified, IPv6 requests will be rejected
+    Address to which outgoing connections will be bound, default ::
+    If an IPv4 address is specified, IPv6 requests will be rejected
 
 -b, --buf-size <size>
-Maximum size of data received and sent in a single recv/send call
-The size is specified in bytes; default is 16384
+    Maximum size of data received and sent in a single recv/send call
+    The size is specified in bytes; default is 16384
 
 -g, --def-ttl <num>
-TTL value for all outgoing connections
-Can be useful for bypassing non-standard/reduced TTL detection.
+    TTL value for all outgoing connections
+    Can be useful for bypassing non-standard/reduced TTL detection.
 
 -N, --no-domain
-Discard requests if a domain is specified as the address.
-Because Since resolving is performed synchronously, it can slow down or even freeze the operation.
+    Discard requests if a domain is specified as the address.
+    Because Since resolving is performed synchronously, it can slow down or even freeze the operation.
 
 -U, --no-udp
-Do not proxy UDP
+    Do not proxy UDP
 
 -F, --tfo
-Enables TCP Fast Open
-If the server supports it, the first packet will be sent immediately along with the SYN
-Supported only on Linux (4.11+)
+    Enables TCP Fast Open
+    If the server supports it, the first packet will be sent immediately along with the SYN
+    Supported only on Linux (4.11+)
 
 -A, --auto <t,r,s,n>
-Automatic mode
-If an event similar to a blocking or crash occurs,
-the bypass parameters following this option will be applied.
-Possible events:
-torst: Timeout expired or the server dropped the connection after the first request
-redirect: HTTP Redirect with a Location whose domain does not match the outgoing one
-ssl_err: No ServerHello was received in response to ClientHello, or the SH contains an invalid session_id
-none: The previous group was skipped, for example due to domain or protocol restrictions
+    Automatic mode
+    If an event similar to a blocking or crash occurs,
+    the bypass parameters following this option will be applied.
+    Possible events:
+    torst: Timeout expired or the server dropped the connection after the first request
+    redirect: HTTP Redirect with a Location whose domain does not match the outgoing one
+    ssl_err: No ServerHello was received in response to ClientHello, or the SH contains an invalid session_id
+    none: The previous group was skipped, for example due to domain or protocol restrictions
 
 -L, --auto-mode <0-3>
-0: Cache IP only if a reconnection is possible
-1: Cache IP also if:
-torst - timeout/connection dropped during packet exchange (i.e., after the first data from the server)
-ssl_err - only one round trip (request-response/request-response-request) has occurred
-2: Sort groups by the number of trigger occurrences, from lowest to highest
-3: 1 and 2 simultaneously
+    0: Cache IP only if a reconnection is possible
+    1: Cache IP also if:
+    torst - timeout/connection dropped during packet exchange (i.e., after the first data from the server)
+    ssl_err - only one round trip (request-response/request-response-request) has occurred
+    2: Sort groups by the number of trigger occurrences, from lowest to highest
+    3: 1 and 2 simultaneously
 
 -u, --cache-ttl <sec>
-Cache lifetime, default 100800 (28 hours)
+    Cache lifetime, default 100800 (28 hours)
 
 -y, --cache-dump <file|->
-Dump cache to file or stdout. Format: <ip> <port> <group index> <time> <host>
+    Dump cache to file or stdout. Format: <ip> <port> <group index> <time> <host>
 
 -T, --timeout <sec>
-Timeout for the first response from the server in seconds
-In Linux, this is converted to milliseconds, so you can specify a fractional number.
+    Timeout for the first response from the server in seconds
+    In Linux, this is converted to milliseconds, so you can specify a fractional number.
 
 -K, --proto <t,h,u,i>
-Protocol whitelist: tls,http,udp,ipv4
+    Protocol whitelist: tls,http,udp,ipv4
 
 -H, --hosts <file|:string>
-Limit the scope of parameters to a list of domains
-Domains must be separated by a newline or a space.
+    Limit the scope of parameters to a list of domains
+    Domains must be separated by a newline or a space.
 
 -j, --ipset <file|:str>
-Limit by specific IPs/subnets
+    Limit by specific IPs/subnets
 
 -V, --pf <port[-portr]>
-Limit by ports
+    Limit by ports
 
 -R, --round <num[-numr]>
-Which requests to apply obfuscation to
-Defaults to 1, i.e. to the first request
+    Which requests to apply obfuscation to
+    Defaults to 1, i.e. to the first request
 
 -s, --split <pos_t>
-Split the request by the specified position
-The position is of the form offset[:repeats:skip][+flag1[flag2]]
-Flags:
-+s: add SNI offset
-+h: add Host offset
-+n: zero offset
-Additional flags:
-+e: end; +m: middle
-Examples:
-0+sm - split the request in the middle of the SNI
-1:3:5 - split by positions 1, 6, and 11
-The key can be specified multiple times to split the request into multiple positions
-If offset is negative and has no flags, the packet size is added to it.
+    Split the request by the specified position
+    The position is of the form offset[:repeats:skip][+flag1[flag2]]
+    Flags:
+    +s: add SNI offset
+    +h: add Host offset
+    +n: zero offset
+    Additional flags:
+    +e: end; +m: middle
+    Examples:
+    0+sm - split the request in the middle of the SNI
+    1:3:5 - split by positions 1, 6, and 11
+    The key can be specified multiple times to split the request into multiple positions
+    If offset is negative and has no flags, the packet size is added to it.
 
 -d, --disorder <pos_t>
-Similar to --split, but the parts are sent in reverse order.
+    Similar to --split, but the parts are sent in reverse order.
 
 -o, --oob <pos_t>
-Similar to --split, but the part is sent as out-of-bounds data.
+    Similar to --split, but the part is sent as out-of-bounds data.
 
 -q, --disoob <pos_t>
-Similar to --disorder, but the part is sent as out-of-bounds data.
+    Similar to --disorder, but the part is sent as out-of-bounds data.
 
 -f, --fake <pos_t>
-Similar to --disorder, except that a part of the fake part is sent before the first part.
-The number of bytes sent from the fake part is equal to the size of the part being split.
-! May be unstable on Windows.
+    Similar to --disorder, except that a part of the fake part is sent before the first part.
+    The number of bytes sent from the fake part is equal to the size of the part being split.
+    ! May be unstable on Windows.
 
 -t, --ttl <num>
-TTL for the fake packet, defaults to 8
-You need to choose a value so that the packet doesn't reach the server, but is processed by DPI.
+    TTL for the fake packet, defaults to 8
+    You need to choose a value so that the packet doesn't reach the server, but is processed by DPI.
 
 -S, --md5sig
-Set the TCP MD5 Signature option for the fake packet.
-Most servers (mainly Linux-based) discard packets with this option.
-Only supported on Linux; may be disabled in some kernel builds (< 3.9, Android).
+    Set the TCP MD5 Signature option for the fake packet.
+    Most servers (mainly Linux-based) discard packets with this option.
+    Only supported on Linux; may be disabled in some kernel builds (< 3.9, Android).
 
 -O, --fake-offset <pos_t>
-Offset the start of the fake data.
-Offsets with flags are calculated relative to the original request.
+    Offset the start of the fake data.
+    Offsets with flags are calculated relative to the original request.
 
 -l, --fake-data <file|:str>
-Specify your own fake packets.
-The string may contain escape characters (\n,\0,\0x10).
+    Specify your own fake packets.
+    The string may contain escape characters (\n,\0,\0x10).
 
 -e, --oob-data <char>
-Byte sent outside the main thread, defaults to 'a'
-ASCII or escape character can be specified.
+    Byte sent outside the main thread, defaults to 'a'
+    ASCII or escape character can be specified.
 
 -n, --fake-sni <str>
-Dynamically changes the SNI in the fake packet.
-If the fake packet size is larger than the request size, the fake packet is reduced in size (the Padding and ECH sizes are changed, or some extensions are removed).
-The "?" character is replaced with a random Latin letter, "#" with a number, and "*" with a letter or number.
-Can be specified multiple times; a random SNI from the specified ones will be selected for each request.
+    Dynamically changes the SNI in the fake packet.
+    If the fake packet size is larger than the request size, the fake packet is reduced in size (the Padding and ECH sizes are changed, or some extensions are removed).
+    The "?" character is replaced with a random Latin letter, "#" with a number, and "*" with a letter or number.
+    Can be specified multiple times; a random SNI from the specified ones will be selected for each request.
 
 -Q, --fake-tls-mod <flag>
-rand - fill the SessionID, Random, and KeyExchange fields with random data.
-orig - use the original ClientHello as the fake.
-msize=n - maximum fake packet size. A negative number reduces the original size by -n bytes.
+    rand - fill the SessionID, Random, and KeyExchange fields with random data.
+    orig - use the original ClientHello as the fake.
+    msize=n - maximum fake packet size. A negative number reduces the original size by -n bytes.
 
 -M, --mod-http <h[,d,r]>
-All kinds of HTTP packet manipulations, can be combined.
-hcsmix:
-"Host: name" -> "hOsT: name"
-dcsmix:
-"Host: name" -> "Host: Name"
-rmspace:
-"Host: name" -> "Host:name\t"
+    All kinds of HTTP packet manipulations, can be combined.
+    hcsmix:
+    "Host: name" -> "hOsT: name"
+    dcsmix:
+    "Host: name" -> "Host: Name"
+    rmspace:
+    "Host: name" -> "Host:name\t"
 
 -r, --tlsrec <pos_t>
-Split ClientHello into separate records at the specified offset.
-Can be specified multiple times.
+    Split ClientHello into separate records at the specified offset.
+    Can be specified multiple times.
 
 -m, --tlsminor <ver>
-Changes the third byte of a TLS record to the specified value.
+    Changes the third byte of a TLS record to the specified value.
 
 -a, --udp-fake <count>
-Number of fake UDP packets.
+    Number of fake UDP packets.
 
 -Y, --drop-sack
-Ignore SACKs, forcing the kernel to resend already delivered packets.
-Only supported on Linux.
+    Ignore SACKs, forcing the kernel to resend already delivered packets.
+    Only supported on Linux.
 ```
 
 ------

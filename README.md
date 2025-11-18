@@ -145,8 +145,42 @@ Specify your own fake packets.
 The string may contain escape characters (\n,\0,\0x10).
 
 -e, --oob-data <char>
-Byte sent outside the main stream, defaults to 'a'.
-Can be specified.
+Byte sent outside the main thread, defaults to 'a'
+ASCII or escape character can be specified.
+
+-n, --fake-sni <str>
+Dynamically changes the SNI in the fake packet.
+If the fake packet size is larger than the request size, the fake packet is reduced in size (the Padding and ECH sizes are changed, or some extensions are removed).
+The "?" character is replaced with a random Latin letter, "#" with a number, and "*" with a letter or number.
+Can be specified multiple times; a random SNI from the specified ones will be selected for each request.
+
+-Q, --fake-tls-mod <flag>
+rand - fill the SessionID, Random, and KeyExchange fields with random data.
+orig - use the original ClientHello as the fake.
+msize=n - maximum fake packet size. A negative number reduces the original size by -n bytes.
+
+-M, --mod-http <h[,d,r]>
+All kinds of HTTP packet manipulations, can be combined.
+hcsmix:
+"Host: name" -> "hOsT: name"
+dcsmix:
+"Host: name" -> "Host: Name"
+rmspace:
+"Host: name" -> "Host:name\t"
+
+-r, --tlsrec <pos_t>
+Split ClientHello into separate records at the specified offset.
+Can be specified multiple times.
+
+-m, --tlsminor <ver>
+Changes the third byte of a TLS record to the specified value.
+
+-a, --udp-fake <count>
+Number of fake UDP packets.
+
+-Y, --drop-sack
+Ignore SACKs, forcing the kernel to resend already delivered packets.
+Only supported on Linux.
 ```
 
 ------
